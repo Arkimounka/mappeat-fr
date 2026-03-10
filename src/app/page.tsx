@@ -92,7 +92,7 @@ function MainContent() {
   const [showContext, setShowContext] = useState(false);
   const [showKeywordSearch, setShowKeywordSearch] = useState(false);
   
-  const selectedLanguage = 'en';
+  const selectedLanguage = 'fr';
   const [originalText, setOriginalText] = useState('');
   const [userContext, setUserContext] = useState('');
   const [returnTab, setReturnTab] = useState<string | null>(null);
@@ -552,7 +552,7 @@ function MainContent() {
                   currentBatch.set(newOrigRef, {
                       originalText: fullOriginalText,
                       userContext: q.koreanHint,
-                      languageCode: 'en',
+                      languageCode: 'fr',
                       ownerId: studentUid,
                       createdBy: userId,
                       sourceClass: selectedClassId,
@@ -571,7 +571,7 @@ function MainContent() {
                       currentBatch.set(newAiRef, {
                           originalText: aiVariation.aiSentence,
                           userContext: aiVariation.aiKorean,
-                          languageCode: 'en',
+                          languageCode: 'fr',
                           ownerId: studentUid,
                           createdBy: userId,
                           sourceClass: selectedClassId,
@@ -1712,11 +1712,11 @@ function MainContent() {
               
               if (!await safeDelay(2500)) break;
 
-              const cleanEnText = item.originalText.replace(/^[A-Za-z]+:\s*/, "").replace(/[\/+|~_\\-]/g, " ");
+              const cleanFrText = item.originalText.replace(/^[A-Za-z]+:\s*/, "").replace(/[\/+|~_\\-]/g, " ");
               for(let r = 0; r < 2; r++) { 
                   if (!isDarkRoomPlayingRef.current || currentSession !== playbackSessionIdRef.current) break;
                   setDarkRoomState({status: `수면 복습 중 (${i+1}/${items.length})`, text: item.originalText});
-                  await playCloudAudio(cleanEnText, 'en-US');
+                  await playCloudAudio(cleanFrText, 'fr-FR');
                   if (r < 1) {
                       if (!await safeDelay(1200)) break;
                   }
@@ -1938,7 +1938,7 @@ function MainContent() {
     const textToSpeak = reviewSentence?.originalText;
     if (!textToSpeak) return;
     setIsSpeakingOriginal(true);
-    await playCloudAudio(textToSpeak, selectedLanguage === 'en' ? 'en-US' : 'ko-KR');
+    await playCloudAudio(textToSpeak, selectedLanguage === 'fr' ? 'fr-FR' : 'ko-KR');
     setIsSpeakingOriginal(false);
   };
 
@@ -1946,7 +1946,7 @@ function MainContent() {
     e.stopPropagation(); stopAudio(); setIsSpeakingOriginal(false);
     const cleanText = text.replace(/\([^)]+\)/g, '').replace(/^[A-Za-z]+:\s*/, "").trim(); 
     setSpeakingItem({ type, index });
-    await playCloudAudio(cleanText, 'en-US');
+    await playCloudAudio(cleanText, 'fr-FR');
     setSpeakingItem(null);
   };
 
@@ -1956,8 +1956,8 @@ function MainContent() {
     if (isListening) return;
     try {
       const recognition = new SpeechRecognition();
-      const isEnglish = field === 'original' || field === 'answer' || field === 'editOriginal';
-      recognition.lang = isEnglish ? 'en-US' : 'ko-KR';
+      const isFrench = field === 'original' || field === 'answer' || field === 'editOriginal';
+      recognition.lang = isFrench ? 'fr-FR' : 'ko-KR';
       recognition.continuous = false; 
       recognition.interimResults = false;
       recognition.onstart = () => setIsListening(field);
@@ -2774,7 +2774,7 @@ function MainContent() {
                     </div>
                     
                     <div className="bg-gray-750 p-4 rounded-xl border border-gray-600 shadow-inner">
-                        <p className="text-gray-400 text-sm mb-2 font-bold flex items-center gap-2"><span>📖</span> 영어 원문</p>
+                        <p className="text-gray-400 text-sm mb-2 font-bold flex items-center gap-2"><span>📖</span> 프랑스어 원문</p>
                         <p className="text-white text-lg font-serif italic">&quot;{liveSession.originalText}&quot;</p>
                     </div>
                     
@@ -2871,7 +2871,7 @@ function MainContent() {
                     <div className="space-y-6">
                       <div className="relative">
                         <textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} className="w-full py-4 pl-3 pr-4 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-purple-500 text-white text-base placeholder:italic placeholder-gray-400" rows={4} placeholder="학습할 문장을 입력하세요~" />
-                        <button onClick={() => handleVoiceInput('original')} className={`absolute bottom-3 left-3 text-2xl transition-colors cursor-pointer z-10 ${isListening === 'original' ? 'text-red-500 animate-pulse' : 'text-gray-400 hover:text-purple-400'}`} title="영어로 말하기">
+                        <button onClick={() => handleVoiceInput('original')} className={`absolute bottom-3 left-3 text-2xl transition-colors cursor-pointer z-10 ${isListening === 'original' ? 'text-red-500 animate-pulse' : 'text-gray-400 hover:text-purple-400'}`} title="프랑스어로 말하기">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8"><path d="M8.25 4.5a3.75 3.75 0 117.5 0v8.25a3.75 3.75 0 11-7.5 0V4.5z" /><path d="M6 10.5a.75.75 0 01.75.75v1.5a5.25 5.25 0 1010.5 0v-1.5a.75.75 0 011.5 0v1.5a6.751 6.751 0 01-6 6.38v2.62h2.25a.75.75 0 010 1.5h-6a.75.75 0 010-1.5h2.25v-2.62a6.751 6.751 0 01-6-6.38v-1.5a.75.75 0 01.75-.75z" /></svg>
                         </button>
                       </div>
@@ -2955,7 +2955,7 @@ function MainContent() {
                                           {liveSession.status === 'accepted' && liveSession.studentAnswer && (
                                               <p className="text-orange-400 text-sm font-bold mb-2 animate-pulse">⚠️ 부모님이 다시 입력을 요청하셨어요!</p>
                                           )}
-                                          <textarea value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)} disabled={liveSession.status === 'evaluating'} className="w-full py-4 pl-3 pr-4 bg-gray-700 border border-gray-600 rounded-xl focus:ring-2 focus:ring-teal-500 text-white text-base placeholder:text-left placeholder:italic" rows={4} placeholder="영어 문장을 입력하세요~" />
+                                          <textarea value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)} disabled={liveSession.status === 'evaluating'} className="w-full py-4 pl-3 pr-4 bg-gray-700 border border-gray-600 rounded-xl focus:ring-2 focus:ring-teal-500 text-white text-base placeholder:text-left placeholder:italic" rows={4} placeholder="프랑스어 문장을 입력하세요~" />
                                           <button onClick={() => handleVoiceInput('answer')} className={`absolute bottom-3 left-3 text-2xl transition-colors cursor-pointer z-10 ${isListening === 'answer' ? 'text-red-500 animate-pulse' : 'text-gray-400 hover:text-teal-400'}`}>
                                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8"><path d="M8.25 4.5a3.75 3.75 0 117.5 0v8.25a3.75 3.75 0 11-7.5 0V4.5z" /><path d="M6 10.5a.75.75 0 01.75.75v1.5a5.25 5.25 0 1010.5 0v-1.5a.75.75 0 011.5 0v1.5a6.751 6.751 0 01-6 6.38v2.62h2.25a.75.75 0 010 1.5h-6a.75.75 0 010-1.5h2.25v-2.62a6.751 6.751 0 01-6-6.38v-1.5a.75.75 0 01.75-.75z" /></svg>
                                           </button>

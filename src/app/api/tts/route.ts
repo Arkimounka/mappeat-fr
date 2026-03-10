@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
 
+// 🌐 언어별 최고급(Neural2 / Studio) 목소리 매핑 객체 (향후 언어 추가 시 여기만 수정하면 됨)
+const VOICE_MAP: Record<string, string> = {
+    'ko-KR': 'ko-KR-Neural2-A', // 한국어 (여성)
+    'en-US': 'en-US-Neural2-F', // 미국 영어 (여성)
+    'fr-FR': 'fr-FR-Neural2-A', // 프랑스어 (여성) - 프랑스어 맵핏을 위한 추가!
+    'es-ES': 'es-ES-Neural2-A', // 스페인어 (여성) - 향후 확장을 위한 미리 추가!
+};
+
 export async function POST(req: Request) {
     try {
         const { text, lang } = await req.json();
@@ -12,12 +20,15 @@ export async function POST(req: Request) {
 
         const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
 
-        // 언어에 맞춘 최고급(Neural2 / Studio) 목소리 세팅
-        const voiceName = lang === 'ko-KR' ? 'ko-KR-Neural2-A' : 'en-US-Neural2-F';
+        // 💡 동적 할당 및 예외 처리 (Fallback)
+        // 매핑 객체에서 요청받은 언어(lang)에 맞는 목소리 이름을 찾습니다.
+        // 만약 우리가 지원하지 않는 언어 코드가 들어왔다면 기본값으로 영어를 사용하도록 안전장치를 둡니다.
+        const voiceName = VOICE_MAP[lang] || VOICE_MAP['en-US'];
+        const safeLanguageCode = VOICE_MAP[lang] ? lang : 'en-US';
 
         const payload = {
             input: { text },
-            voice: { languageCode: lang, name: voiceName },
+            voice: { languageCode: safeLanguageCode, name: voiceName },
             audioConfig: { audioEncoding: 'MP3' }
         };
 
