@@ -8,9 +8,9 @@ import { AuthProvider } from "../lib/AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Mappeat", // 👈 [수정 1] 앱 이름 변경
-  description: "Mapping Context & Repeating Expressions", // 👈 [수정 2] 설명 업데이트
-  manifest: "/manifest.json", // 👈 [수정 3] PWA 매니페스트 파일 연결 (필수!)
+  title: "프랑스어 Mappeat", // 👈 앱 이름 명확화 (프랑스어 버전)
+  description: "문맥으로 배우고 반복하는 프랑스어 학습 (Mapping Context & Repeating French Expressions)", // 👈 검색 엔진 노출용 설명 업데이트
+  manifest: "/manifest.json", 
   icons: {
     icon: "/icon-192x192.png",
     apple: "/icon-192x192.png",
