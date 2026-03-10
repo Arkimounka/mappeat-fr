@@ -3554,3 +3554,4 @@ export default function Home() {
     </Suspense>
   );
 }
+// 프랑스어 버전 테스트
