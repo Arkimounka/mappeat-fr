@@ -10,6 +10,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { db } from '../lib/firebase';
 import { useAuth } from '../lib/AuthContext';
 import LoginView from '../components/LoginView';
+import MappeatOnboarding from '../components/MappeatOnboarding';
 import { 
   collection, 
   addDoc, 
@@ -87,6 +88,23 @@ function MainContent() {
   const router = useRouter();
   const pathname = usePathname();
   const userId = user?.uid;
+  // ⭐️ 2. 로컬 스토리지 기반 온보딩 검사 로직 삽입
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
+
+  useEffect(() => {
+    const hasSeen = localStorage.getItem('hasSeenMappeatOnboarding');
+    if (!hasSeen) {
+      setShowOnboarding(true);
+    }
+    setIsCheckingOnboarding(false);
+  }, []);
+  
+  // ⭐️ 3. 온보딩 완료 시 영구 방문 도장 찍기 함수 추가
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('hasSeenMappeatOnboarding', 'true');
+    setShowOnboarding(false);
+  };
 
   const [activeTab, setActiveTab] = useState('add');
   const [showContext, setShowContext] = useState(false);
@@ -2414,8 +2432,17 @@ function MainContent() {
   }
 
   if (loading) return <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
-  if (!user || (user && (!userData || !userData.role))) return <LoginView />;
+  // ⭐️ 4-1. 도장 확인 중 화면 깜빡임 방지용 로딩 화면
+  if (isCheckingOnboarding) {
+    return <div className="min-h-screen bg-gray-900 flex items-center justify-center text-indigo-200 font-bold">Loading Mappeat...</div>;
+  }
 
+  // ⭐️ 4-2. 도장이 없어서 온보딩을 띄워야 하는 경우
+  if (showOnboarding) {
+    return <MappeatOnboarding onComplete={handleOnboardingComplete} />;
+  }
+
+  if (!user || (user && (!userData || !userData.role))) return <LoginView />;
   return (
     <div className={`mx-auto px-4 py-8 bg-gray-900 text-white min-h-screen shadow-2xl md:my-10 md:rounded-3xl border-gray-800 md:border-4 relative transition-all duration-500 ${userData?.role === 'teacher' ? 'max-w-5xl' : 'max-w-[480px]'}`}>
       {/* 🚀 [Step 3-2] AI 라이브 퀴즈 생성 로딩 스피너 오버레이 */}
@@ -3554,4 +3581,3 @@ export default function Home() {
     </Suspense>
   );
 }
-// 프랑스어 버전 테스트
